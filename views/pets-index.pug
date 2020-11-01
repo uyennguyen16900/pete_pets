@@ -16,11 +16,22 @@ block content
     ul.pagination
       if currentPage > 1
         li.page-item
-          a.page-link(href=`?page=${currentPage - 1}`) Previous
+          if term
+            a.page-link(href=`?term=${term}&page=${currentPage - 1}`) Previous
+          else
+            a.page-link(href=`?page=${currentPage - 1}`) Previous
+
       - var i = 1;
       while i <= pagesCount
         li.page-item
-          a.page-link(href=`?page=${i}`)= i++
+          if term 
+            a.page-link(href=`?term=${term}&page=${i}`)= i++
+          else
+            a.page-link(href=`?page=${i}`)= i++
+
       if currentPage < pagesCount
         li.page-item
-          a.page-link(href=`?page=${parseInt(currentPage) + 1}`) Next
+          if term
+            a.page-link(href=`?term=${term}$page=${parseInt(currentPage) + 1}`) Next
+          else
+            a.page-link(href=`?page=${parseInt(currentPage) + 1}`) Next
