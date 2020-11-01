@@ -14,8 +14,7 @@ const methodOverride = require('method-override')
 const app = express();
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/petes-pets');
-
+mongoose.connect('mongodb://localhost/petes-pets', { useNewUrlParser: true, useUnifiedTopology: true });
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
