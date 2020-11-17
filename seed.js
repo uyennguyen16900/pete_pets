@@ -1,6 +1,6 @@
 module.exports = {
 	"undefined": "localhost/local",
 	"dev": "localhost/local",
-	"prod": "localhost/locals",
+	// "prod": "localhost/local",
 	"price": 10
 }

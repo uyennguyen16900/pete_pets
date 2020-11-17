@@ -30,6 +30,7 @@ const client = new Upload(process.env.S3_BUCKET, {
     suffix: '-square'
   }]
 });
+console.log(client)
 
 // PET ROUTES
 module.exports = (app) => {
@@ -43,8 +44,6 @@ module.exports = (app) => {
 
   // CREATE PET
   app.post('/pets', upload.single('avatar'), (req, res, next) => {
-    console.log(req.file)
-
     var pet = new Pet(req.body);
     pet.save(function (err) {
       if (req.file) {
@@ -102,20 +101,22 @@ module.exports = (app) => {
   });
 
   // SEARCH PET
-  app.get('/search', (req, res) => {
+  app.get('/search', function (req, res) {
+    Pet
+      .find(
+        { $text : { $search : req.query.term } },
+        { score : { $meta: "textScore" } }
+      )
+      .sort({ score : { $meta : 'textScore' } })
+      .limit(20)
+      .exec(function(err, pets) {
+        if (err) { return res.status(400).send(err) }
 
-    const term = new RegExp(req.query.term, 'i')
-
-    const page = req.query.page || 1
-    Pet.paginate(
-      {
-        $or: [
-          { 'name': term },
-          { 'species': term }
-        ]
-      },
-      { page: page }).then((results) => {
-        res.render('pets-index', { pets: results.docs, pagesCount: results.pages, currentPage: page, term: req.query.term });
+        if (req.header('Content-Type') == 'application/json') {
+          return res.json({ pets: pets });
+        } else {
+          return res.render('pets-index', { pets: pets, term: req.query.term });
+        }
       });
   });
 
